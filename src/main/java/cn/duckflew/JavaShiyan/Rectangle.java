@@ -1,0 +1,35 @@
+package cn.duckflew.JavaShiyan;
+
+public class Rectangle
+{
+    private double length, width; //私有属性
+
+    public Rectangle(double l, double w)
+    { //公有的构造方法
+        length = l;
+        width = w;
+        //函数参数可以与类属性同名。此时，需要使用关键字this
+    }
+
+    public double getPerimeter()
+    { //公有的成员方法
+        return 2 * (length + width);
+    }
+
+    public double getArea()
+    {
+        return length * width;
+    }
+
+    public void showSize()
+    {
+        System.out.println("length=" + length + ", width=" + width);
+    }
+
+    public static void main(String[] args)
+    {
+        Rectangle r1 = new Rectangle(3.5, 4); //创建类的实例对象
+        r1.showSize();
+        System.out.println("此矩阵的面积是：" + r1.getArea());
+    }
+}
