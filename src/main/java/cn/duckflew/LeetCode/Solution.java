@@ -425,9 +425,121 @@ public class Solution
         }
         return dp[d][target];
     }
+
+    /**
+     * 718  求最长的重复子数组
+     */
+    public int findLength(int[] A, int[] B) {
+        int lenA=A.length;
+        int lenB=B.length;
+        int[][]dp=new int[lenA][lenB];
+        int maxLength=0;
+
+        for (int i = 0; i < lenA; i++)
+        {
+            for (int j = 0; j < lenB; j++)
+            {
+                if (i==0&&j==0)
+                {
+                    if (A[0]==B[0])
+                    {
+                        dp[0][0] = 1;
+                        maxLength=dp[0][0];
+                    }
+                    else
+                        dp[0][0] = 0;
+                }
+                else if (i==0||j==0)
+                {
+                    if (A[i]==B[j])
+                    {
+                        dp[i][j] = 1;
+                        maxLength=Math.max(dp[i][j],maxLength);
+                    }
+                    else dp[i][j]=0;
+                }
+                else if (A[i]==B[j])
+                {
+
+                    dp[i][j] = dp[i-1][j-1] + 1;
+                    if (dp[i][j]>maxLength)maxLength=dp[i][j];
+
+                }
+                else if (A[i]!=B[j]) dp[i][j]=0;
+            }
+        }
+//        for (int[] ints : dp)
+//        {
+//            System.out.println(Arrays.toString(ints));
+//        }
+//        System.out.println(dp[1][2]);
+        return maxLength;
+    }
+
+    /**
+     * 300 最长递增子序列
+     */
+
+    public int lengthOfLIS(int[] nums) {
+        int []dp=new int[nums.length];
+        dp[0]=1;
+        for (int i = 1; i < nums.length; i++)
+        {
+            int cur=0;//找出从0-i-1最大的dp值 并且要满足numsj<numsi
+            for (int j = 0; j < i; j++)
+            {
+                if (nums[j]<nums[i])cur=Math.max(cur,dp[j]+1);
+            }
+            dp[i]=cur==0?1:cur;
+        }
+        int res=0;
+        for (int i = 0; i < nums.length; i++)
+        {
+            if (dp[i]>res)res=dp[i];
+        }
+        return res;
+    }
+
+    /**
+     * 5. 最长回文字符串
+     * @param s
+     * @return
+     */
+    public String longestPalindrome(String s) {
+        boolean[][] dp=new boolean[s.length()][s.length()  ];
+        int maxi=0;
+        int maxj=0;
+        for (int i = 0; i < s.length(); i++)
+        {
+            dp[i][i]=true;
+        }
+        for (int i = 0; i < s.length(); i++)
+        {
+            char chi=s.charAt(i);
+            for (int j = i; j < s.length(); j++)
+            {
+                char chj=s.charAt(j);
+                 if (j-i<3)
+                {
+                    dp[i][j] = chi == chj;
+                }
+
+                if (dp[i][j]&&j-i>maxj-maxi)
+                {
+                    maxi=i;
+                    maxj=j;
+                }
+            }
+        }
+        for (boolean[] booleans : dp)
+        {
+            System.out.println(Arrays.toString(booleans));
+        }
+        return s.substring(maxi,maxj);
+    }
     public static void main(String[] args)
     {
-        int i = new Solution().numRollsToTarget(3, 4, 7);
-        System.out.println(i);
+        String babad = new Solution().longestPalindrome("aaaa");
+        System.out.println(babad);
     }
 }
