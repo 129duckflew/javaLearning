@@ -214,20 +214,20 @@ public class Solution
         }
         return -1;
     }
-    public  boolean searchMatrix(int[][] matrix, int target) {
-        if (matrix==null||matrix.length==0||matrix[0].length==0)return false;
-        int curCol=matrix[0].length-1;
-        int curRow=0;
-        int cur;
-        while (curCol>=0&&curRow<matrix.length)
-        {
-            cur=matrix[curRow][curCol];
-            if (cur==target)return true;
-            else if (cur>target) curCol--;
-            else curRow++;
-        }
-        return false;
-    }
+//    public  boolean searchMatrix(int[][] matrix, int target) {
+//        if (matrix==null||matrix.length==0||matrix[0].length==0)return false;
+//        int curCol=matrix[0].length-1;
+//        int curRow=0;
+//        int cur;
+//        while (curCol>=0&&curRow<matrix.length)
+//        {
+//            cur=matrix[curRow][curCol];
+//            if (cur==target)return true;
+//            else if (cur>target) curCol--;
+//            else curRow++;
+//        }
+//        return false;
+//    }
     /**
      *leetcode 64  dp经典问题
      */
@@ -300,6 +300,12 @@ public class Solution
             dp[i]=Math.min(dp[i-1]+cost[i-1],dp[i-2]+cost[i-2]);
         return dp[cost.length];
     }
+
+    /**
+     * leetcode  198. 打家劫舍
+     * @param nums
+     * @return
+     */
     public static int rob(int[] nums) {
         if (nums==null||nums.length==0)return 0;
         if (nums.length==1)return nums[0];
@@ -369,6 +375,13 @@ public class Solution
         }
         return dp[nums.length-1][target];
    }
+
+    /**
+     *  leetcode 322. 零钱兑换  基础dp问题
+     * @param coins
+     * @param amount
+     * @return
+     */
     public int coinChange(int[] coins, int amount) {
         int[] dp=new int[amount+1];
         dp[0]=0;
@@ -389,6 +402,13 @@ public class Solution
         return dp[amount];
         else return -1;
     }
+
+    /**
+     *  leetcode 62. 不同路径  最基础的dp问题
+     * @param m
+     * @param n
+     * @return
+     */
     public int uniquePaths(int m, int n) {
         int [][]dp=new int[m][n];
         for (int i = 0; i < m; i++)
@@ -401,6 +421,14 @@ public class Solution
         }
         return dp[m-1][n-1];
     }
+
+    /**
+     * leetcode   1155. 掷骰子的N种方法
+     * @param d
+     * @param f
+     * @param target
+     * @return
+     */
     public int numRollsToTarget(int d, int f, int target) {
         int[][] dp = new int[d + 1][target+1];
         for (int i = 1; i < d + 1; i++)
@@ -509,37 +537,333 @@ public class Solution
         boolean[][] dp=new boolean[s.length()][s.length()  ];
         int maxi=0;
         int maxj=0;
-        for (int i = 0; i < s.length(); i++)
-        {
-            dp[i][i]=true;
-        }
-        for (int i = 0; i < s.length(); i++)
+        for (int i = s.length()-1;i>=0;i--)
         {
             char chi=s.charAt(i);
             for (int j = i; j < s.length(); j++)
             {
                 char chj=s.charAt(j);
-                 if (j-i<3)
+                if (j==i)dp[i][j]=true;
+                else if (j-i<3)
                 {
                     dp[i][j] = chi == chj;
                 }
-
-                if (dp[i][j]&&j-i>maxj-maxi)
+                else dp[i][j]=(chi==chj)&&(dp[i+1][j-1]);
+                if (dp[i][j]&&(j-i)>(maxj-maxi))
                 {
                     maxi=i;
                     maxj=j;
                 }
             }
         }
-        for (boolean[] booleans : dp)
-        {
-            System.out.println(Arrays.toString(booleans));
-        }
-        return s.substring(maxi,maxj);
+        return s.substring(maxi,maxj+1);
     }
+
+    /**
+     * 678 有效的括号字符串
+     * @param s
+     * @return
+     */
+    public boolean checkValidString(String s) {
+        char[] chars = s.toCharArray();
+        Stack<Integer> leftStack=new Stack<>();
+        Stack<Integer> starStack=new Stack<>();
+        for (int i = 0; i < chars.length; i++)
+        {
+            char cur=chars[i];
+            if (cur=='(')
+            {
+                leftStack.push(i);
+            }
+            else if (cur=='*')
+            {
+                starStack.push(i);
+            }
+            else
+            {
+                if (!leftStack.isEmpty())leftStack.pop();
+                else
+                {
+                    if (!starStack.isEmpty())
+                        starStack.pop();
+                    else return false;
+                }
+            }
+        }
+        if (leftStack.size()>starStack.size())return false;
+        while (!leftStack.isEmpty())
+        {
+            if (starStack.peek()>leftStack.peek())
+            {
+                starStack.pop();
+                leftStack.pop();
+            }
+            else return false;
+        }
+        return true;
+    }
+
+    /**
+     * leetcode 494 求目标和  未解决
+     * @param nums
+     * @param S
+     * @return
+     */
+    public int findTargetSumWays(int[] nums, int S) {
+        int [][]dp=new int[nums.length][2001];
+        for (int i = 0; i < nums.length; i++)
+        {
+            if (i==0)
+            {
+                dp[i][1000+nums[i]]=1;
+                System.out.println("dp["+i+"]["+(1000+nums[i])+"]赋值为1");
+                dp[i][1000-nums[i]]=1;
+                System.out.println("dp["+i+"]["+(1000-nums[i])+"]赋值为1");
+            }
+            else
+            for (int j = 1; j < 2000; j++)
+            {
+                dp[i][j]=dp[i-1][j-nums[i]]+dp[i-1][j+nums[i]];
+                System.out.println("dp["+i+"]["+(j)+"]赋值为"+dp[i][j]);
+            }
+        }
+        for (int i = 0; i < dp.length; i++)
+        {
+            for (int j = 0; j < dp[0].length; j++)
+            {
+                if (dp[i][j]!=0) System.out.print("dp["+i+"]["+(j)+"]="+dp[i][j] + "  ");
+            }
+            System.out.println();
+        }
+        return dp[nums.length-1][S+1000];
+    }
+    public List<Integer> diffWaysToCompute(String expression) {
+        List<Integer> res=new ArrayList<>();
+        List<Integer> left;
+        List<Integer> right;
+        boolean flag=false;  //表示有没有出现运算符
+        for (int i = 0; i < expression.length(); i++)
+        {
+            char ch=expression.charAt(i);
+            if (!Character.isDigit(ch))
+            {
+                flag=true;
+                left=diffWaysToCompute(expression.substring(0,i));
+                right=diffWaysToCompute(expression.substring(i+1));
+                for (Integer leftInteger : left)
+                {
+                    for (Integer rightInteger : right)
+                    {
+                        switch (ch)
+                        {
+                            case '+':
+                                res.add(leftInteger+rightInteger);
+                                break;
+                            case '-':
+                                res.add(leftInteger-rightInteger);
+                                break;
+                            case '*':
+                                res.add(leftInteger*rightInteger);
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+        if (!flag)res.add(Integer.parseInt(expression));
+        return res;
+    }
+    public int distance(int []point)
+    {
+        return point[0]*point[0]+point[1]*point[1];
+    }
+
+    /**
+     * leetcode 973  topK问题
+     * @param points
+     * @param k
+     * @return
+     */
+    public int[][] kClosest(int[][] points, int k) {
+        PriorityQueue<int[]> priorityQueue=new PriorityQueue<>((o1, o2) -> distance(o2)-distance(o1));
+        for (int i = 0; i < points.length; i++)
+        {
+            if (k>priorityQueue.size())priorityQueue.add(points[i]);
+            else
+            {
+                if (distance(points[i])<distance(priorityQueue.peek()))
+                {
+                    priorityQueue.poll();
+                    priorityQueue.add(points[i]);
+                }
+            }
+        }
+        int [][]res=new int[k][];
+        for (int i = 0; i < k; i++)
+            res[i]=priorityQueue.poll();
+        return res;
+    }
+    public boolean searchMatrix(int[][] matrix, int target) {
+        return binarySearch(matrix,0,matrix.length*matrix[0].length,target);
+    }
+    public boolean binarySearch(int [][] array,int left,int right,int target)
+    {
+        if (left>=right)return false;
+        int mid=(left+right)>>1;
+        int row=mid/array[0].length;
+        int col=mid%array[0].length;
+        if (target>array[row][col])return binarySearch(array,mid+1,right,target);
+        else if (target<array[row][col])return binarySearch(array,left,mid,target);
+        else return true;
+    }
+
+    /**
+     * leetcode 95
+     * @param n
+     * @return
+     */
+    public List<TreeNode> generateTrees(int n) {
+        return generate(1,n);
+    }
+    List<TreeNode> generate(int start,int end)
+    {
+        List<TreeNode> Trees=new ArrayList<>();
+        if (start>end)
+        {
+            Trees.add(null);
+            return Trees;
+        }
+        for (int i = start; i <=end; i++)
+        {
+            List<TreeNode> leftTrees = generate(start, i-1);
+            List<TreeNode> rightTrees = generate(i + 1, end);
+            for (TreeNode leftTree : leftTrees)
+            {
+                for (TreeNode rightTree : rightTrees)
+                {
+                    TreeNode curRoot=new TreeNode(i);
+                    curRoot.left=leftTree;
+                    curRoot.right=rightTree;
+                    Trees.add(curRoot);
+                }
+            }
+        }
+        return Trees;
+    }
+    public int singleNonDuplicate(int[] nums) {
+        if (nums.length==1)return nums[0];
+        if (nums[0]!=nums[1])return nums[0];
+        int i=0;
+        while (true)
+        {
+            if (2*i>=nums.length)return nums[2*i-1];
+            if (2*i+1>=nums.length)return nums[2*i];
+            if (nums[2*i]!=nums[2*i+1])
+            {
+                return nums[2*i];
+            }
+            i++;
+        }
+    }
+    public ListNode mergeKLists(ListNode[] lists) {
+        ListNode res=null;
+        for (int i = 0; i < lists.length; i++)
+        {
+            res=mergeTwoList(res,lists[i]);
+        }
+        return mergeTwoLists(lists,0,lists.length-1);
+    }
+    public ListNode mergeTwoLists(ListNode[] lists,int left,int right)
+    {
+        if (left>right)return null;
+        if (left==right)return lists[left];
+        ListNode leftLists=mergeTwoLists(lists,left,(left+right)/2);
+        ListNode rightLists=mergeTwoLists(lists,(left+right)/2+1,right);
+        return mergeTwoList(leftLists,rightLists);
+    }
+    ListNode mergeTwoList(ListNode l1,ListNode l2)
+    {
+        if (l1==null)return l2;
+        if (l2==null )return l1;
+        ListNode p1=l1;
+        ListNode p2=l2;
+        ListNode head=null ;
+        if (p1.val<=p2.val)
+        {
+            head=p1;
+            p1=p1.next;
+        }
+        else
+        {
+            head=p2;
+            p2=p2.next;
+        }
+        ListNode p3=head;
+        while (p1!=null&&p2!=null)
+        {
+            if (p1.val<=p2.val)
+            {
+                p3.next=p1;
+                p1=p1.next;
+            }
+            else
+            {
+                p3.next=p2;
+                p2=p2.next;
+            }
+            p3=p3.next;
+        }
+        while (p1!=null)
+        {
+            p3.next=p1;
+            p1=p1.next;
+            p3=p3.next;
+        }
+        while (p2!=null)
+        {
+            p3.next=p2;
+            p2=p2.next;
+            p3=p3.next;
+        }
+        return head;
+    }
+    /**
+     * leetccode   4. 寻找两个正序数组的中位数
+     * @param nums1
+     * @param nums2
+     * @return
+     */
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int allLen=nums1.length+nums2.length;
+        int index=allLen/2;
+        int i=0;
+        int j=0;
+        boolean lastIsI=true;
+        int step=0;
+        while ((i+k)!=index)
+        {
+            if (nums1[i]<nums2[j])
+            {
+                i++;
+                lastIsI=true;
+            }
+            else
+            {
+                j++;
+                lastIsI=false;
+            }
+            step++;
+        }
+        if (allLen%2==1 )
+        {
+            if (lastIsI)return nums1[i];
+            return nums2[j];
+        }
+        else return (double)(nums1[i]+nums2[j])/2.0;
+    }
+
     public static void main(String[] args)
     {
-        String babad = new Solution().longestPalindrome("aaaa");
-        System.out.println(babad);
+        System.out.println(new Solution().findMedianSortedArrays(new int[]{1,3},new int[]{2}));
     }
 }
