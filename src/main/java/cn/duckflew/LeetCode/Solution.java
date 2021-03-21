@@ -462,45 +462,19 @@ public class Solution
         int lenB=B.length;
         int[][]dp=new int[lenA][lenB];
         int maxLength=0;
-
         for (int i = 0; i < lenA; i++)
         {
             for (int j = 0; j < lenB; j++)
             {
-                if (i==0&&j==0)
+                if (A[i]==B[j])
                 {
-                    if (A[0]==B[0])
-                    {
-                        dp[0][0] = 1;
-                        maxLength=dp[0][0];
-                    }
-                    else
-                        dp[0][0] = 0;
+                    dp[i][j]=(i==0||j==0)?1:dp[i-1][j-1]+1;
+                    maxLength=Math.max(maxLength,dp[i][j]);
                 }
-                else if (i==0||j==0)
-                {
-                    if (A[i]==B[j])
-                    {
-                        dp[i][j] = 1;
-                        maxLength=Math.max(dp[i][j],maxLength);
-                    }
-                    else dp[i][j]=0;
-                }
-                else if (A[i]==B[j])
-                {
-
-                    dp[i][j] = dp[i-1][j-1] + 1;
-                    if (dp[i][j]>maxLength)maxLength=dp[i][j];
-
-                }
-                else if (A[i]!=B[j]) dp[i][j]=0;
+                else
+                    dp[i][j]=0;
             }
         }
-//        for (int[] ints : dp)
-//        {
-//            System.out.println(Arrays.toString(ints));
-//        }
-//        System.out.println(dp[1][2]);
         return maxLength;
     }
 
@@ -829,41 +803,38 @@ public class Solution
     }
     /**
      * leetccode   4. 寻找两个正序数组的中位数
-     * @param nums1
-     * @param nums2
      * @return
      */
-    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
-        int allLen=nums1.length+nums2.length;
-        int index=allLen/2;
-        int i=0;
-        int j=0;
-        boolean lastIsI=true;
-        int step=0;
-        while ((i+k)!=index)
-        {
-            if (nums1[i]<nums2[j])
-            {
-                i++;
-                lastIsI=true;
-            }
-            else
-            {
-                j++;
-                lastIsI=false;
-            }
-            step++;
-        }
-        if (allLen%2==1 )
-        {
-            if (lastIsI)return nums1[i];
-            return nums2[j];
-        }
-        else return (double)(nums1[i]+nums2[j])/2.0;
-    }
+//    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+//        int allLen=nums1.length+nums2.length;
+//        int index=allLen/2;
+//        int i=0;
+//        int j=0;
+//        boolean lastIsI=true;
+//        int step=0;
+//        while ((i)!=index)
+//        {
+//            if (nums1[i]<nums2[j])
+//            {
+//                i++;
+//                lastIsI=true;
+//            }
+//            else
+//            {
+//                j++;
+//                lastIsI=false;
+//            }
+//            step++;
+//        }
+//        if (allLen%2==1 )
+//        {
+//            if (lastIsI)return nums1[i];
+//            return nums2[j];
+//        }
+//        else return (double)(nums1[i]+nums2[j])/2.0;
+//    }
 
     public static void main(String[] args)
     {
-        System.out.println(new Solution().findMedianSortedArrays(new int[]{1,3},new int[]{2}));
     }
 }
